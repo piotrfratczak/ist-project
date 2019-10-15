@@ -11,7 +11,9 @@ public class Blog implements Readable, Writable{
         tweets = new LinkedList<>();
         try{
             populateFromDisk();
-        }catch(Exception e){}
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         //TODO
     }
 
@@ -19,5 +21,21 @@ public class Blog implements Readable, Writable{
         //TODO
     }
 
+    //Readable interface methods
+    public AbstractPost readOne(){
+        return null;
+    }
 
+    public List<AbstractPost> readAll() throws IOException {
+        return null;
+    }
+
+    public List<AbstractPost> readOwnPost() throws IOException {
+        return null;
+    }
+
+    //Writable interface method
+    public void save() throws IOException {
+
+    }
 }
