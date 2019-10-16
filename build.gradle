@@ -5,6 +5,7 @@ plugins {
 task runServer(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'ist.java.server.BlogServer'
+    args '4040'
     standardInput = System.in
 
 }

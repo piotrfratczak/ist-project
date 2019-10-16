@@ -1,8 +1,127 @@
 package ist.java.client;
 
+import ist.java.data.*;
+import ist.java.request.*;
+import java.util.Scanner;
+import java.net.*;
+import java.io.*;
+
 public class Client {
+
+	private static boolean appIsOn = true;
+
     public static void main(String... args){
 
-        //hello
+    	int port = Integer.parseInt(args[0]);
+
+    	while(appIsOn){
+
+    		displayMenu();
+
+	    	switch(getChoice()){
+	    		case 1:
+	    			try{
+	    				newTweet(port);
+	    			}catch(UnknownHostException e){
+	    				e.printStackTrace();
+	    			}catch(IOException e){
+	    				e.printStackTrace();
+	    			}
+	    			break;
+	    		case 2:
+	    			try{
+	    				readTweets(port);
+	    			}catch(UnknownHostException e){
+	    				e.printStackTrace();
+	    			}catch(IOException e){
+	    				e.printStackTrace();
+	    			}catch(ClassNotFoundException e){
+	    				e.printStackTrace();
+	    			}
+	    			break;
+	    		case 3:
+	    			appIsOn = false;
+	    			break;
+	    		default:
+	    			System.out.println("Choice invalid.");
+	    	}
+    	}
+
+    }
+
+    private static void displayMenu(){
+
+    	System.out.println("< 1: Write a tweet   >");
+    	System.out.println("< 2: Read all tweets >");
+    	System.out.println("< 3: Quit            >");
+    	System.out.println("Your choice: ");
+    }
+
+    private static int getChoice(){
+
+    	Scanner scanner = new Scanner(System.in);
+    	//Accept only int
+    	int choice = 0;
+		while (scanner.hasNext()){
+		    if (scanner.hasNextInt()){
+		        choice = scanner.nextInt();
+		        break;
+		    } else {
+		        scanner.next(); // Just discard this, not interested...
+		        System.out.println("Input an integer.");
+		    }
+		}
+
+		return choice;
+    }
+
+    private static void newTweet(int port) throws UnknownHostException, IOException {
+
+    	Scanner scanner = new Scanner(System.in);
+
+    	//TODO handle ppl messing with input
+    	System.out.println("Please enter your username: ");
+    	String author = scanner.nextLine();
+
+    	System.out.println("What is on your mind? (120 characters)");
+    	String message = scanner.nextLine();
+
+    	PostSubmission tweet = new PostSubmission(author, message);
+
+    	Socket socket = new Socket("localhost", port);
+    	OutputStream outputStream = socket.getOutputStream();
+    	ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
+
+    	objectOutStream.writeObject(tweet);
+
+    	objectOutStream.close();
+    	outputStream.close();
+    	socket.close();
+
+    }
+
+    private static void readTweets(int port) throws UnknownHostException, IOException, ClassNotFoundException {
+
+    	PostRequest postRequest = new PostRequest();
+
+    	Socket socket = new Socket("localhost", port);
+    	OutputStream outputStream = socket.getOutputStream();
+    	ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
+
+    	objectOutStream.writeObject(postRequest);
+
+    	InputStream inputStream = socket.getInputStream();
+    	ObjectInputStream objectInStream = new ObjectInputStream(inputStream);
+
+    	AbstractPost tweet = (AbstractPost) objectInStream.readObject();
+
+    	System.out.println("Latest tweet:\n");
+    	System.out.println(tweet.toString() + "\n");
+
+    	objectOutStream.close();
+    	outputStream.close();
+    	objectInStream.close();
+    	inputStream.close();
+    	socket.close();
     }
 }
