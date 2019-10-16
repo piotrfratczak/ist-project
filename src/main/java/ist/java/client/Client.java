@@ -2,7 +2,7 @@ package ist.java.client;
 
 import ist.java.data.*;
 import ist.java.request.*;
-import java.util.Scanner;
+import java.util.*;
 import java.net.*;
 import java.io.*;
 
@@ -18,42 +18,42 @@ public class Client {
 
     		displayMenu();
 
-	    	switch(getChoice()){
-	    		case 1:
-	    			try{
-	    				newTweet(port);
-	    			}catch(UnknownHostException e){
-	    				e.printStackTrace();
-	    			}catch(IOException e){
-	    				e.printStackTrace();
-	    			}
-	    			break;
-	    		case 2:
-	    			try{
-	    				readTweets(port);
-	    			}catch(UnknownHostException e){
-	    				e.printStackTrace();
-	    			}catch(IOException e){
-	    				e.printStackTrace();
-	    			}catch(ClassNotFoundException e){
-	    				e.printStackTrace();
-	    			}
-	    			break;
-	    		case 3:
-	    			appIsOn = false;
-	    			break;
-	    		default:
-	    			System.out.println("Choice invalid.");
-	    	}
+    		try{
+    			//TODO: add another option - readMyTweets(int port)
+    			//should ask for your username to find tweet (not case sensitive)
+		    	switch(getChoice()){
+		    		case 1:
+		    			newTweet(port);
+		    			break;
+		    		case 2:
+		    			readOneTweet(port);
+		    			break;
+		    		case 3:
+		    			readAllTweets(port);
+		    			break;
+		    		case 4:
+		    			appIsOn = false;
+		    			break;
+		    		default:
+		    			System.out.println("\nChoice invalid.\n");
+		    	}
+		    }catch(UnknownHostException e){
+				e.printStackTrace();
+			}catch(IOException e){
+				e.printStackTrace();
+			}catch(ClassNotFoundException e){
+				e.printStackTrace();
+			}
     	}
 
     }
 
     private static void displayMenu(){
 
-    	System.out.println("< 1: Write a tweet   >");
-    	System.out.println("< 2: Read all tweets >");
-    	System.out.println("< 3: Quit            >");
+    	System.out.println("< 1: Write a tweet         >");
+    	System.out.println("< 2: Read the latest tweet >");
+    	System.out.println("< 3: Read all tweets       >");
+    	System.out.println("< 4: Quit                  >");
     	System.out.println("Your choice: ");
     }
 
@@ -79,7 +79,7 @@ public class Client {
 
     	Scanner scanner = new Scanner(System.in);
 
-    	//TODO handle ppl messing with input
+    	//TODO handle case when ppl mess with input
     	System.out.println("Please enter your username: ");
     	String author = scanner.nextLine();
 
@@ -100,9 +100,9 @@ public class Client {
 
     }
 
-    private static void readTweets(int port) throws UnknownHostException, IOException, ClassNotFoundException {
+    private static void readOneTweet(int port) throws UnknownHostException, IOException, ClassNotFoundException {
 
-    	PostRequest postRequest = new PostRequest();
+    	PostRequest postRequest = new PostRequest(PostRequest.READ_ONE_POST);
 
     	Socket socket = new Socket("localhost", port);
     	OutputStream outputStream = socket.getOutputStream();
@@ -117,6 +117,33 @@ public class Client {
 
     	System.out.println("Latest tweet:\n");
     	System.out.println(tweet.toString() + "\n");
+
+    	objectOutStream.close();
+    	outputStream.close();
+    	objectInStream.close();
+    	inputStream.close();
+    	socket.close();
+    }
+
+    private static void readAllTweets(int port) throws UnknownHostException, IOException, ClassNotFoundException {
+
+    	PostRequest postRequest = new PostRequest(PostRequest.READ_ALL_POSTS);
+
+    	Socket socket = new Socket("localhost", port);
+    	OutputStream outputStream = socket.getOutputStream();
+    	ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
+
+    	objectOutStream.writeObject(postRequest);
+
+    	InputStream inputStream = socket.getInputStream();
+    	ObjectInputStream objectInStream = new ObjectInputStream(inputStream);
+
+    	List<AbstractPost> tweets = (List<AbstractPost>) objectInStream.readObject();
+
+    	System.out.println("\nAll the tweets:\n");
+    	for(AbstractPost tweet : tweets){
+    		System.out.println(tweet.toString() + "\n");
+    	}
 
     	objectOutStream.close();
     	outputStream.close();

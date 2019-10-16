@@ -4,6 +4,7 @@ import ist.java.data.*;
 import ist.java.request.*;
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import java.lang.ClassNotFoundException;
 
 public class BlogServer {
@@ -21,7 +22,7 @@ public class BlogServer {
     		e.printStackTrace();
     	}
     	
-    	
+    	//TODO: multithreading
     	while(true){
 	    	try{
 
@@ -34,11 +35,22 @@ public class BlogServer {
 
 	    		if(request instanceof PostRequest){
 
-	    			AbstractPost lastPost = blog.readOne();
+	    			PostRequest postRequest = (PostRequest) request;
+
 	    			OutputStream outputStream = socket.getOutputStream();
 	    			ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
 
-	    			objectOutStream.writeObject(lastPost);
+	    			if(postRequest.getAction() == PostRequest.READ_ONE_POST){
+
+	    				AbstractPost lastPost = blog.readOne();
+	    				objectOutStream.writeObject(lastPost);
+
+	    			}else if(postRequest.getAction() == PostRequest.READ_ALL_POSTS){
+	    				
+	    				List<AbstractPost> allPosts = blog.readAll();
+	    				objectOutStream.writeObject(allPosts);
+
+	    			}//TODO: maybe - else{throw new NoSuchActionException();}	    			
 
 	    			objectOutStream.close();
 	    			outputStream.close();
@@ -70,7 +82,7 @@ public class BlogServer {
 
 	    	}
 	    }
-
+	    //TODO: we need to handle this properly
 	    //connection.close();
     }
 }

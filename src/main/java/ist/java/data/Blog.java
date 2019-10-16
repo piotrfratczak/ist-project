@@ -1,23 +1,24 @@
 package ist.java.data;
 
 import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Blog implements Readable, Writable{
 
     List<AbstractPost> tweets;
 
     public Blog(){
+        
         tweets = new LinkedList<>();
         try{
             populateFromDisk();
+        }catch(EOFException e){
+            System.out.println("No tweets to read");
         }catch(IOException e){
             e.printStackTrace();
         }catch(ClassNotFoundException e){
             e.printStackTrace();
         }
-        //TODO
     }
 
     private void populateFromDisk() throws IOException, ClassNotFoundException {
@@ -51,8 +52,15 @@ public class Blog implements Readable, Writable{
         return tweets;
     }
 
-    public List<AbstractPost> readOwnPosts() throws IOException {
-        return null;
+    public List<AbstractPost> readOwnPosts(String username) throws IOException {
+        
+        List<AbstractPost> list = new LinkedList<>();
+
+        for(AbstractPost post : tweets){
+            if(post.getAuthor().equals(username)) list.add(post);
+        }
+
+        return list;
     }
 
     //Writable interface method

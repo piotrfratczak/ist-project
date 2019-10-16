@@ -11,7 +11,7 @@ public abstract class AbstractPost implements Serializable {
     protected String author;
     protected String tweet;
     protected Date timestamp;
-
+    //TODO: let's add location, language and/or sth
 
     public String toJson() {
         return new Gson().toJson(this);
@@ -25,5 +25,9 @@ public abstract class AbstractPost implements Serializable {
 		return "Author: @" + author + "\n" +
 				"Tweet: " + tweet + "\n" +
 				"Date: " + date;
+	}
+
+	public String getAuthor(){
+		return author;
 	}
 }
