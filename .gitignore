@@ -1,4 +1,4 @@
 .gradle
-bin
-build
-gradle
+bin/
+build/
+gradle/
