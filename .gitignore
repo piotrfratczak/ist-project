@@ -1,3 +1,4 @@
-.tar
-.rar
-.o
+.gradle
+bin
+build
+gradle
