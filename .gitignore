@@ -1,4 +1,11 @@
-.gradle
+*.gradle
+*.bat
+.settings
+.classpath
+.project
+
+gradlew
+
 bin/
 build/
 gradle/
