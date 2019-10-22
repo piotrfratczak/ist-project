@@ -48,9 +48,17 @@ public class BlogServer {
 	    			}else if(postRequest.getAction() == PostRequest.READ_ALL_POSTS){
 	    				
 	    				List<AbstractPost> allPosts = blog.readAll();
-	    				objectOutStream.writeObject(allPosts);
+						objectOutStream.writeObject(allPosts);
 
-	    			}//TODO: maybe - else{throw new NoSuchActionException();}	    			
+					}else if(postRequest.getAction() == PostRequest.READ_OWN_POSTS){
+						
+						List<AbstractPost> myPosts = blog.readOwnPosts(null);
+						objectOutStream.writeObject(myPosts);
+
+					}
+					
+					
+					//TODO: maybe - else{throw new NoSuchActionException();}	    			
 
 	    			objectOutStream.close();
 	    			outputStream.close();

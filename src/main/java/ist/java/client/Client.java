@@ -1,10 +1,18 @@
 package ist.java.client;
 
-import ist.java.data.*;
-import ist.java.request.*;
-import java.util.*;
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Scanner;
+
+import ist.java.data.AbstractPost;
+import ist.java.request.PostRequest;
+import ist.java.request.PostSubmission;
 
 public class Client {
 
@@ -27,11 +35,14 @@ public class Client {
 		    			break;
 		    		case 2:
 		    			readOneTweet(port);
-		    			break;
-		    		case 3:
+						break;
+					case 3:
+						readMyTweets(port);
+						break;
+		    		case 4:
 		    			readAllTweets(port);
 		    			break;
-		    		case 4:
+		    		case 5:
 		    			appIsOn = false;
 		    			break;
 		    		default:
@@ -51,9 +62,10 @@ public class Client {
     private static void displayMenu(){
 
     	System.out.println("< 1: Write a tweet         >");
-    	System.out.println("< 2: Read the latest tweet >");
-    	System.out.println("< 3: Read all tweets       >");
-    	System.out.println("< 4: Quit                  >");
+		System.out.println("< 2: Read the latest tweet >");
+		System.out.println("< 3: Read my own tweets	   >");
+    	System.out.println("< 4: Read all tweets       >");
+    	System.out.println("< 5: Quit                  >");
     	System.out.println("Your choice: ");
     }
 
@@ -150,5 +162,32 @@ public class Client {
     	objectInStream.close();
     	inputStream.close();
     	socket.close();
-    }
+	}
+	
+	private static void readMyTweets(int port)  throws UnknownHostException, IOException, ClassNotFoundException {
+
+		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS);
+		
+		Socket socket = new Socket("localhost", port);
+    	OutputStream outputStream = socket.getOutputStream();
+    	ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
+
+    	objectOutStream.writeObject(postRequest);
+
+    	InputStream inputStream = socket.getInputStream();
+    	ObjectInputStream objectInStream = new ObjectInputStream(inputStream);
+
+		List<AbstractPost> ownTweets = (List<AbstractPost>) objectInStream.readObject();
+
+		System.out.println("\nAll your tweets: \n");
+		for(AbstractPost tweet : ownTweets){
+    		System.out.println(tweet.toString() + "\n");
+    	}
+
+		objectOutStream.close();
+    	outputStream.close();
+    	objectInStream.close();
+    	inputStream.close();
+    	socket.close();
+	}
 }
