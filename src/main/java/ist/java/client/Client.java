@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import ist.java.data.AbstractPost;
+import ist.java.data.Post;
 import ist.java.request.PostRequest;
 import ist.java.request.PostSubmission;
 
@@ -27,8 +28,7 @@ public class Client {
     		displayMenu();
 
     		try{
-    			//TODO: add another option - readMyTweets(int port)
-    			//should ask for your username to find tweet (not case sensitive)
+    			
 		    	switch(getChoice()){
 		    		case 1:
 		    			newTweet(port);
@@ -37,7 +37,7 @@ public class Client {
 		    			readOneTweet(port);
 						break;
 					case 3:
-						readMyTweets(port);
+						readOwnTweets(port);
 						break;
 		    		case 4:
 		    			readAllTweets(port);
@@ -64,7 +64,7 @@ public class Client {
     	System.out.println("< 1: Write a tweet         >");
 		System.out.println("< 2: Read the latest tweet >");
 		System.out.println("< 3: Read my own tweets	   >");
-    	System.out.println("< 4: Read all tweets       >");
+ 		System.out.println("< 4: Read all tweets       >");
     	System.out.println("< 5: Quit                  >");
     	System.out.println("Your choice: ");
     }
@@ -136,7 +136,43 @@ public class Client {
     	objectInStream.close();
     	inputStream.close();
     	socket.close();
-    }
+	}
+	// I added this method, for user to read own tweets.
+	private static void readOwnTweets(int port)  throws UnknownHostException, IOException, ClassNotFoundException {
+
+		Scanner scanner = new Scanner(System.in);
+
+    	//TODO handle case when ppl mess with input
+    	System.out.println("Please enter your username: ");
+    	String author = scanner.nextLine();
+		
+		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS);
+		
+		Socket socket = new Socket("localhost", port);
+    	OutputStream outputStream = socket.getOutputStream();
+    	ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
+
+    	objectOutStream.writeObject(postRequest);
+
+    	InputStream inputStream = socket.getInputStream();
+    	ObjectInputStream objectInStream = new ObjectInputStream(inputStream);
+
+		List<AbstractPost> ownTweets = (List<AbstractPost>) objectInStream.readObject();
+		
+		// Checks that author is correct, so it will give tweets of spesific user.
+		System.out.println("\nAll your tweets: \n");
+		for(AbstractPost tweet : ownTweets){
+			if (tweet.getAuthor().equals(author))
+				ownTweets.add(tweet);
+    		System.out.println(tweet.toString() + "\n");
+    	}
+
+		objectOutStream.close();
+    	outputStream.close();
+    	objectInStream.close();
+    	inputStream.close();
+    	socket.close();
+	}
 
     private static void readAllTweets(int port) throws UnknownHostException, IOException, ClassNotFoundException {
 
@@ -165,30 +201,4 @@ public class Client {
     	socket.close();
 	}
 	
-	private static void readMyTweets(int port)  throws UnknownHostException, IOException, ClassNotFoundException {
-
-		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS);
-		
-		Socket socket = new Socket("localhost", port);
-    	OutputStream outputStream = socket.getOutputStream();
-    	ObjectOutputStream objectOutStream = new ObjectOutputStream(outputStream);
-
-    	objectOutStream.writeObject(postRequest);
-
-    	InputStream inputStream = socket.getInputStream();
-    	ObjectInputStream objectInStream = new ObjectInputStream(inputStream);
-
-		List<AbstractPost> ownTweets = (List<AbstractPost>) objectInStream.readObject();
-
-		System.out.println("\nAll your tweets: \n");
-		for(AbstractPost tweet : ownTweets){
-    		System.out.println(tweet.toString() + "\n");
-    	}
-
-		objectOutStream.close();
-    	outputStream.close();
-    	objectInStream.close();
-    	inputStream.close();
-    	socket.close();
-	}
 }
