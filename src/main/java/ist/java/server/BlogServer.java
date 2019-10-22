@@ -57,7 +57,9 @@ public class BlogServer {
 
 	    		}else if(request instanceof PostSubmission){
 
-	    			PostSubmission post = (PostSubmission) request;
+	    			PostSubmission postSubmission = (PostSubmission) request;
+	    			Post post = postSubmission.getPost();
+	    			System.out.println("New post Received!\n" + post.toString() + "\n");
 	    			blog.addPost(post);
 
 	    			blog.save();

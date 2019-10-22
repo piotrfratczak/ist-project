@@ -86,7 +86,8 @@ public class Client {
     	System.out.println("What is on your mind? (120 characters)");
     	String message = scanner.nextLine();
 
-    	PostSubmission tweet = new PostSubmission(author, message);
+    	Post newPost = new Post(author, message);
+    	PostSubmission tweet = new PostSubmission(newPost);
 
     	Socket socket = new Socket("localhost", port);
     	OutputStream outputStream = socket.getOutputStream();
