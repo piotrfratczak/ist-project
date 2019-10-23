@@ -15,10 +15,13 @@ import ist.java.data.Post;
 import ist.java.request.PostRequest;
 import ist.java.request.PostSubmission;
 
+// This class will allow the user to write and read tweets.
 public class Client {
 
 	private static boolean appIsOn = true;
 
+	// Main program handles the inputs of user, e. g. what the user wants to do. It
+	// also handles the exceptions.
     public static void main(String... args){
 
     	int port = Integer.parseInt(args[0]);
@@ -58,7 +61,7 @@ public class Client {
     	}
 
     }
-
+	// This subroutine prints out the options for user.
     private static void displayMenu(){
 
     	System.out.println("< 1: Write a tweet         >");
@@ -68,7 +71,8 @@ public class Client {
     	System.out.println("< 5: Quit                  >");
     	System.out.println("Your choice: ");
     }
-
+	// This subroutine checks what integer the users chooses and returns the choice. 
+	// It also warns user if something else than integer is input.
     private static int getChoice(){
 
     	Scanner scanner = new Scanner(System.in);
@@ -86,7 +90,8 @@ public class Client {
 
 		return choice;
     }
-
+	// In this subroutine new tweet is made. The user is connected to the server
+	// and those communicate with each other.
     private static void newTweet(int port) throws UnknownHostException, IOException {
 
     	Scanner scanner = new Scanner(System.in);
@@ -113,6 +118,8 @@ public class Client {
 
     }
 
+	// In this subroutine the user requests latest tweet from the file/blogserver. 
+	// Then the latest tweet is printed to screen of the user.
     private static void readOneTweet(int port) throws UnknownHostException, IOException, ClassNotFoundException {
 
     	PostRequest postRequest = new PostRequest(PostRequest.READ_ONE_POST);
@@ -137,7 +144,7 @@ public class Client {
     	inputStream.close();
     	socket.close();
 	}
-	// I added this method, for user to read own tweets.
+	// This subroutine prints out all the tweets of one user.
 	private static void readOwnTweets(int port)  throws UnknownHostException, IOException, ClassNotFoundException {
 
 		Scanner scanner = new Scanner(System.in);
@@ -174,6 +181,7 @@ public class Client {
     	socket.close();
 	}
 
+	// This subroutine prints out all the tweets that are written in the blog.
     private static void readAllTweets(int port) throws UnknownHostException, IOException, ClassNotFoundException {
 
     	PostRequest postRequest = new PostRequest(PostRequest.READ_ALL_POSTS);

@@ -16,7 +16,8 @@ public abstract class AbstractPost implements Serializable {
     public String toJson() {
         return new Gson().toJson(this);
     }
-
+	// This subroutine returns the objects as a string. So basically 
+	// author, tweet and date.
     public String toString(){
 
 		SimpleDateFormat formatter = new SimpleDateFormat("LLL dd, yyyy, hh:mm:ss a");

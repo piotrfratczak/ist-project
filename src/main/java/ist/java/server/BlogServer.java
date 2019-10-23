@@ -6,7 +6,9 @@ import java.io.*;
 import java.net.*;
 import java.util.List;
 import java.lang.ClassNotFoundException;
-
+// The blogserver class is the server and it handles all the connections 
+// to the client. It checks whether the user connects to read tweets or
+// write tweets etc.
 public class BlogServer {
 
 	private static ServerSocket connection;

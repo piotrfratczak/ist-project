@@ -3,6 +3,7 @@ package ist.java.data;
 import java.io.*;
 import java.util.*;
 
+// This class creates a list of all the tweets and places the in a file.
 public class Blog implements Readable, Writable{
 
     List<AbstractPost> tweets;
