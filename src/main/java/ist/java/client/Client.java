@@ -94,13 +94,26 @@ public class Client {
 	// and those communicate with each other.
     private static void newTweet(int port) throws UnknownHostException, IOException {
 
-    	Scanner scanner = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
+		
+    	
+		System.out.println("Please enter your username: ");
+		// I set the username max length now to 15 letters,
+		// don't knoew if it is good one, but at least it 
+		// wont accept too long names or sentences.
+		String author = "";
 
-    	//TODO handle case when ppl mess with input
-    	System.out.println("Please enter your username: ");
-    	String author = scanner.nextLine();
-
-    	System.out.println("What is on your mind? (120 characters)");
+		while (scanner.hasNext()){
+			if(author.length() < 15) {
+				author = scanner.nextLine();
+				break;
+			} else {
+				scanner.next();
+				System.out.println("Error! Your username is too long");
+			}
+		}
+		
+		System.out.println("What is on your mind? (120 characters)");
     	String message = scanner.nextLine();
 
     	Post newPost = new Post(author, message);
@@ -149,9 +162,20 @@ public class Client {
 
 		Scanner scanner = new Scanner(System.in);
 
-    	//TODO handle case when ppl mess with input
+		// Here is the same as before, that it checks if 
+		// username is suitable.
     	System.out.println("Please enter your username: ");
-    	String author = scanner.nextLine();
+		String author = "";
+
+		while (scanner.hasNext()){
+			if(author.length() < 15) {
+				author = scanner.nextLine();
+				break;
+			} else {
+				scanner.next();
+				System.out.println("Error! Your username is too long");
+			}
+		}
 		
 		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS);
 		
