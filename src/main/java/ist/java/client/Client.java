@@ -1,19 +1,10 @@
 package ist.java.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Scanner;
-
-import ist.java.data.AbstractPost;
-import ist.java.data.Post;
-import ist.java.request.PostRequest;
-import ist.java.request.PostSubmission;
+import ist.java.data.*;
+import ist.java.request.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 // This class will allow the user to write and read tweets.
 public class Client {
@@ -157,6 +148,7 @@ public class Client {
     	inputStream.close();
     	socket.close();
 	}
+
 	// This subroutine prints out all the tweets of one user.
 	private static void readOwnTweets(int port)  throws UnknownHostException, IOException, ClassNotFoundException {
 
@@ -177,7 +169,7 @@ public class Client {
 			}
 		}
 		
-		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS);
+		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS, author);
 		
 		Socket socket = new Socket("localhost", port);
     	OutputStream outputStream = socket.getOutputStream();
@@ -193,8 +185,6 @@ public class Client {
 		// Checks that author is correct, so it will give tweets of spesific user.
 		System.out.println("\nAll your tweets: \n");
 		for(AbstractPost tweet : ownTweets){
-			if (tweet.getAuthor().equals(author))
-				ownTweets.add(tweet);
     		System.out.println(tweet.toString() + "\n");
     	}
 

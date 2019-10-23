@@ -53,8 +53,9 @@ public class BlogServer {
 						objectOutStream.writeObject(allPosts);
 
 					}else if(postRequest.getAction() == PostRequest.READ_OWN_POSTS){
-						
-						List<AbstractPost> myPosts = blog.readOwnPosts(null);
+
+						String author = postRequest.getUsername();
+						List<AbstractPost> myPosts = blog.readOwnPosts(author);
 						objectOutStream.writeObject(myPosts);
 
 					}
