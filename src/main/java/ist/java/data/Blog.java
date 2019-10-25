@@ -58,7 +58,7 @@ public class Blog implements Readable, Writable{
         List<AbstractPost> list = new LinkedList<>();
 
         for(AbstractPost post : tweets){
-            if(post.getAuthor().equals(username)) list.add(post);
+            if(post.getAuthor().equalsIgnoreCase(username)) list.add(post);
         }
 
         return list;

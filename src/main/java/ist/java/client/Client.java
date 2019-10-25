@@ -5,10 +5,13 @@ import ist.java.request.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.lang.Math;
 
 // This class will allow the user to write and read tweets.
 public class Client {
 
+	private static final int MAX_TWEET_SIZE = 120;
+	private static final int MAX_USERNAME_SIZE = 20;
 	private static boolean appIsOn = true;
 
 	// Main program handles the inputs of user, e. g. what the user wants to do. It
@@ -62,6 +65,7 @@ public class Client {
     	System.out.println("< 5: Quit                  >");
     	System.out.println("Your choice: ");
     }
+
 	// This subroutine checks what integer the users chooses and returns the choice. 
 	// It also warns user if something else than integer is input.
     private static int getChoice(){
@@ -81,31 +85,33 @@ public class Client {
 
 		return choice;
     }
+
+    private static String getUsername(){
+		System.out.println("Please enter your username: ");
+
+		Scanner scanner = new Scanner(System.in);
+		String author = scanner.nextLine();
+
+		int limit = Math.min(author.length(), MAX_USERNAME_SIZE);
+		int spaceIndex = author.indexOf(" ");
+		if(spaceIndex > -1 && spaceIndex < limit){
+			limit = spaceIndex;
+		}
+		return author.substring(0, limit);
+    }
+
 	// In this subroutine new tweet is made. The user is connected to the server
 	// and those communicate with each other.
     private static void newTweet(int port) throws UnknownHostException, IOException {
 
-		Scanner scanner = new Scanner(System.in);
-		
-    	
-		System.out.println("Please enter your username: ");
-		// I set the username max length now to 15 letters,
-		// don't knoew if it is good one, but at least it 
-		// wont accept too long names or sentences.
-		String author = "";
+    	String author = getUsername();
 
-		while (scanner.hasNext()){
-			if(author.length() < 15) {
-				author = scanner.nextLine();
-				break;
-			} else {
-				scanner.next();
-				System.out.println("Error! Your username is too long");
-			}
-		}
-		
-		System.out.println("What is on your mind? (120 characters)");
+		Scanner scanner = new Scanner(System.in);		
+		System.out.println("What is on your mind? (" + MAX_TWEET_SIZE + " characters)");
     	String message = scanner.nextLine();
+    	if (message.length() > MAX_TWEET_SIZE){
+    		message = message.substring(0, MAX_TWEET_SIZE);
+    	}
 
     	Post newPost = new Post(author, message);
     	PostSubmission tweet = new PostSubmission(newPost);
@@ -152,22 +158,7 @@ public class Client {
 	// This subroutine prints out all the tweets of one user.
 	private static void readOwnTweets(int port)  throws UnknownHostException, IOException, ClassNotFoundException {
 
-		Scanner scanner = new Scanner(System.in);
-
-		// Here is the same as before, that it checks if 
-		// username is suitable.
-    	System.out.println("Please enter your username: ");
-		String author = "";
-
-		while (scanner.hasNext()){
-			if(author.length() < 15) {
-				author = scanner.nextLine();
-				break;
-			} else {
-				scanner.next();
-				System.out.println("Error! Your username is too long");
-			}
-		}
+		String author = getUsername();
 		
 		PostRequest postRequest = new PostRequest(PostRequest.READ_OWN_POSTS, author);
 		
@@ -182,10 +173,13 @@ public class Client {
 
 		List<AbstractPost> ownTweets = (List<AbstractPost>) objectInStream.readObject();
 		
-		// Checks that author is correct, so it will give tweets of spesific user.
-		System.out.println("\nAll your tweets: \n");
-		for(AbstractPost tweet : ownTweets){
-    		System.out.println(tweet.toString() + "\n");
+		if (ownTweets == null || ownTweets.size() == 0){
+    		System.out.println("\nYou havent tweeted yet!\n");
+    	}else{
+    		System.out.println("\nAll your tweets:\n");
+    		for(AbstractPost tweet : ownTweets){
+    			System.out.println(tweet.toString() + "\n");
+    		}
     	}
 
 		objectOutStream.close();
@@ -211,9 +205,13 @@ public class Client {
 
     	List<AbstractPost> tweets = (List<AbstractPost>) objectInStream.readObject();
 
-    	System.out.println("\nAll the tweets:\n");
-    	for(AbstractPost tweet : tweets){
-    		System.out.println(tweet.toString() + "\n");
+    	if (tweets == null || tweets.size() == 0){
+    		System.out.println("No tweets yet!\n");
+    	}else{
+    		System.out.println("\nAll the tweets:\n");
+    		for(AbstractPost tweet : tweets){
+    			System.out.println(tweet.toString() + "\n");
+    		}
     	}
 
     	objectOutStream.close();
